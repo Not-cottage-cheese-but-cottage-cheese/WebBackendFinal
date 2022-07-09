@@ -1,12 +1,21 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const bodyParser = require("body-parser");
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const bodyParser = require('body-parser');
 
-const mailsRoutes = require("./src/routes/mail");
+const mailsRoutes = require('./src/routes/mail');
+const Mail = require('./src/models/mail');
 const app = express();
 const port = process.env.PORT || 3000;
 let db = null;
+
+async function initDb() {
+  if (db) {
+    await Mail.deleteMany({});
+    const large = require('./large.json');
+    await Mail.insertMany(large);
+  }
+}
 
 async function start() {
   try {
@@ -14,17 +23,18 @@ async function start() {
 
     app.use(
       cors({
-        origin: "http://localhost:3001",
-        optionsSuccessStatus: 200,
+        origin: 'http://localhost:3001',
+        optionsSuccessStatus: 200
       })
     );
     app.use(bodyParser.json());
     app.use(
       bodyParser.urlencoded({
-        extended: true,
+        extended: true
       })
     );
-    app.use("/mails", mailsRoutes);
+    app.use('/mails', mailsRoutes);
+    initDb();
     app.listen(port, () => {
       console.log(`listening on port ${port}`);
     });
@@ -35,8 +45,8 @@ async function start() {
 
 start();
 
-process.on("SIGTERM", shutDown);
-process.on("SIGINT", shutDown);
+process.on('SIGTERM', shutDown);
+process.on('SIGINT', shutDown);
 
 function shutDown() {
   if (db) {
