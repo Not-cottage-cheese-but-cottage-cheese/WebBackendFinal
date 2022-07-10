@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    environment:
+      - DB_CONN=mongodb://user:example1_123456798@109.120.180.144/web
+      - FRONT=http://localhost:3005
+    stdin_open: true
+    tty: true
