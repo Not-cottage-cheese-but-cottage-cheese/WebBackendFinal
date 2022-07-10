@@ -23,7 +23,7 @@ router.get('/incoming/:category', async (req, res) => {
         mails = (await Mail.find({ confidence: true })) || [];
         break;
     }
-    res.json({ isSucess: true, data: mails.slice(0, 20) });
+    res.json({ isSucess: true, data: mails.slice(req.query.limit * req.query.offset, req.query.limit * (+req.query.offset + 1)) });
   } catch (e) {
     res.json({ isSuccess: false, message: e });
   }
